@@ -2,21 +2,14 @@
 *.iml
 *.ipr
 *.iws
-out
- 
-# Eclipse Project files
+out/
 .classpath
 .project
 .settings/
- 
 bin/
 gen/
-local.properties
- 
-.DS_Store
-Thumbs.db
- 
 *.bak
 *.tem
 *.temp
-#.swp
+*.swp
+*.class
