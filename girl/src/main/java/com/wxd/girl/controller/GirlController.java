@@ -1,9 +1,19 @@
-package com.wxd.girl;
+package com.wxd.girl.controller;
 
+import com.wxd.girl.dataobject.Result;
+import com.wxd.girl.properties.GirlProperties;
+import com.wxd.girl.repository.GirlRepository;
+import com.wxd.girl.service.GirlService;
+import com.wxd.girl.dataobject.Girl;
+import com.wxd.girl.utils.ResultUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -13,6 +23,8 @@ import java.util.List;
  */
 @RestController
 public class GirlController {
+    private final static Logger log = LoggerFactory.getLogger(GirlController.class);
+
     @Autowired
     private GirlProperties girlProperties;
 
@@ -51,25 +63,35 @@ public class GirlController {
 
 
     @PostMapping(value = "/girls")
-    public Girl addGirl(@RequestParam("cupSize") String cupSize, @RequestParam("age") Integer age) {
-        Girl girl = new Girl();
-        girl.setAge(age);
-        girl.setCupSize(cupSize);
-        return repository.save(girl);
+    public Result<Girl> addGirl(@Valid Girl girl, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+
+//            result.setData(bindingResult.getFieldError().getDefaultMessage());
+//            log.error(bindingResult.getFieldError().getDefaultMessage());
+            return ResultUtil.error(1, bindingResult.getFieldError().getDefaultMessage());
+        }
+
+        girl.setAge(girl.getAge());
+        girl.setCupSize(girl.getCupSize());
+
+        return ResultUtil.success(repository.save(girl));
     }
 
-    @GetMapping(value = "girls")
-    public List<Girl> findGils() {
+    @GetMapping(value = "/girls")
+    public List<Girl> findGirls(){
+        System.out.println("findGirls");
+        int a = 8/0;
+        System.out.println("3333333333333");
         return repository.findAll();
     }
 
-    @GetMapping(value = "girls/{id}")
+    @GetMapping(value = "/girls/{id}")
     public Girl girlFindOne(@PathVariable("id") Integer id) {
         //jpa 版本导致不能直接使用findOne方法
         return repository.findById(id).get();
     }
 
-    @PutMapping(value = "girls/{id}")
+    @PutMapping(value = "/girls/{id}")
     public Girl updateGirl(@PathVariable("id") Integer id, @RequestParam("cupSize") String cupSize,
                            @RequestParam("age") Integer age) {
         Girl girl = new Girl();
@@ -80,7 +102,7 @@ public class GirlController {
     }
 
 
-    @DeleteMapping(value = "girls/{id}")
+    @DeleteMapping(value = "/girls/{id}")
     public void deleteGirl(@PathVariable("id") Integer id) {
         repository.deleteById(id);
     }
@@ -91,9 +113,14 @@ public class GirlController {
     }
 
 
-    @PostMapping(value = "girls/addtwo")
+    @PostMapping(value = "/girls/addtwo")
     public void addTwo() {
         girlService.addGirls();
+    }
+
+    @GetMapping(value = "/girls/getAge/{id}")
+    public void getAge(@PathVariable("id") Integer id) throws Exception {
+            girlService.getAge(id);
     }
 
 }

@@ -1,5 +1,6 @@
-package com.wxd.girl;
+package com.wxd.girl.repository;
 
+import com.wxd.girl.dataobject.Girl;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

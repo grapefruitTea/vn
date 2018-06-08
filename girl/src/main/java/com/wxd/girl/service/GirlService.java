@@ -1,10 +1,12 @@
-package com.wxd.girl;
+package com.wxd.girl.service;
 
+import com.wxd.girl.dataobject.Girl;
+import com.wxd.girl.enums.ResultEnum;
+import com.wxd.girl.exception.GirlException;
+import com.wxd.girl.repository.GirlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * @Auther: vn
@@ -32,5 +34,16 @@ public class GirlService {
         girl1.setAge(13);
 
         repository.save(girl1);
+    }
+
+    public void getAge(Integer id) throws Exception {
+        Girl girl = repository.findById(id).get();
+        Integer age = girl.getAge();
+        if (age < 10) {
+            //你还在上小学
+            throw new GirlException(ResultEnum.PRIMARY_SCHOOL);
+        } else if (age > 10 && age < 16) {
+            throw new GirlException(ResultEnum.MIDDLE_SCHOOL);
+        }
     }
 }
