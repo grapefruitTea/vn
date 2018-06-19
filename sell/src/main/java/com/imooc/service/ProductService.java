@@ -1,6 +1,7 @@
 package com.imooc.service;
 
 import com.imooc.dataobject.ProductInfo;
+import com.imooc.dto.CartDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,13 +11,15 @@ public interface ProductService {
     public ProductInfo findOne(String productId);
 
     //查询上架商品
-    public List<ProductInfo> findUpAll();
+     List<ProductInfo> findUpAll();
 
-    public Page<ProductInfo> findAll(Pageable pageable);
+     Page<ProductInfo> findAll(Pageable pageable);
 
-    public ProductInfo save(ProductInfo productInfo);
+     ProductInfo save(ProductInfo productInfo);
 
     //加库存
+    void increaseStock(List<CartDTO> cartDTOList);
 
     //减库存
+    void decreaseStock(List<CartDTO> cartDTOList);
 }
