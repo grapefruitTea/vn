@@ -4,9 +4,9 @@
 * */
 $(function () {
     var initUrl = '/shop/shopadmin/getshopinitinfo';
-    var registerShopUrl = 'shop/shopadmin/registershop';
-    alert(initUrl);
+    var registerShopUrl = '/shop/shopadmin/registershop';
     getShopInitInfo();
+
     function getShopInitInfo() {
         $.getJSON(initUrl, function (data) {
             if (data.success) {
@@ -32,37 +32,46 @@ $(function () {
             shop.shopName = $('#shop-name').val();
             shop.shopAddr = $('#shop-addr').val();
             shop.shopDesc = $('#shop-desc').val();
-            shop.shopPhone = $('#shop-phone').val();
-            shop.shopCategory={
-                shopCategoryId:$('#shop-category').find('option').not(function () {
+            shop.phone = $('#shop-phone').val();
+            shop.shopCategory = {
+                shopCategoryId: $('#shop-category').find('option').not(function () {
                     return !this.selected;
                 }).data('id')
             };
-            shop.area={
-                areaId:$('#area').find('option').not(function () {
+            shop.area = {
+                areaId: $('#area').find('option').not(function () {
                     return !this.selected;
                 }).data('id')
             };
             var shopImg = $('#shop-img')[0].files[0];
-            var formData = new formData();
-            formData.append('shopImg',shopImg);
+            var formData = new FormData();
+            var verifyCodeActual = $('#j_kaptcha').val();
+            if (!verifyCodeActual) {
+                $.toast('请输入验证码');
+                return;
+            }
+
+            formData.append('shopImg', shopImg);
             formData.append('shopStr', JSON.stringify(shop));
+            formData.append('verifyCodeActual', verifyCodeActual);
 
             $.ajax({
-                url:registerShopUrl,
-                type:POST,
-                data:formData,
-                contentType:false,
-                processDate:false,
-                cache:false,
-                success:function (data) {
+                url: registerShopUrl,
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                cache: false,
+                success: function (data) {
                     if (data.success) {
                         $.toast('提交成功！');
                     } else {
-                        $.toast('提交失败！'+data.errMsg);
+                        $.toast('提交失败！' + data.errMsg);
                     }
+                    $('#captcha_img').click();
                 }
             });
+
 
         });
 

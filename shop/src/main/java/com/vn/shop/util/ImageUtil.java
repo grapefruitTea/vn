@@ -81,4 +81,21 @@ public class ImageUtil {
     private static String getFileExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf("."));
     }
+
+    /**
+     * 删除文件或目录
+     * @param storePath
+     */
+    public static void deleteFileOrPath(String storePath) {
+        File fileOrPath = new File(storePath);
+        if (fileOrPath.exists()) {
+            if (fileOrPath.isDirectory()) {
+                File[] files = fileOrPath.listFiles();
+                for (File file : files) {
+                    file.delete();
+                }
+            }
+            fileOrPath.delete();
+        }
+    }
 }

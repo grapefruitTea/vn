@@ -3,12 +3,15 @@ package com.vn.shop.web.shopadmin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.shop.dto.ShopExecution;
 import com.vn.shop.entity.Area;
+import com.vn.shop.entity.PersonInfo;
 import com.vn.shop.entity.Shop;
 import com.vn.shop.entity.ShopCategory;
 import com.vn.shop.enums.ShopStateEnum;
+import com.vn.shop.exception.ShopOperationException;
 import com.vn.shop.service.AreaService;
 import com.vn.shop.service.ShopCategoryService;
 import com.vn.shop.service.ShopService;
+import com.vn.shop.util.CodeUtil;
 import com.vn.shop.util.HttpServletRequestUtil;
 import com.vn.shop.util.PathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +40,29 @@ public class ShopManagementController {
     @Autowired
     private ShopCategoryService shopCategoryService;
 
+    @RequestMapping(value = "/getshopbyid", method = RequestMethod.GET)
+    @ResponseBody
+    private Map<String, Object> getShopById(HttpServletRequest request) {
+        Map<String, Object> modelMap = new HashMap<>(8);
+        long shopId = HttpServletRequestUtil.getLong(request, "shopId");
+        if (shopId > -1) {
+            try {
+                List<Area> areaList = areaService.getAreaList();
+                Shop shop = shopService.getByShopId(shopId);
+                modelMap.put("success", true);
+                modelMap.put("shop", shop);
+                modelMap.put("areaList", areaList);
+            } catch (Exception e) {
+                modelMap.put("success", false);
+                modelMap.put("errMsg", e.getMessage());
+            }
+        } else {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", "empty shopId");
+        }
+        return modelMap;
+    }
+
     @RequestMapping(value = "/getshopinitinfo", method = RequestMethod.GET)
     @ResponseBody
     private Map<String, Object> getInitInfo() {
@@ -62,6 +88,12 @@ public class ShopManagementController {
     @ResponseBody
     private Map<String, Object> registerShop(HttpServletRequest httpServletRequest) {
         Map<String, Object> modelMap = new HashMap<>(16);
+        if (!CodeUtil.checkVerifyCode(httpServletRequest)) {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", "输入了错误的验证码!");
+            return modelMap;
+        }
+
         //1.Accepts and transforms parameters.
         String shopStr = HttpServletRequestUtil.getString(httpServletRequest, "shopStr");
         if (null == shopStr) {
@@ -91,17 +123,10 @@ public class ShopManagementController {
         }
 
         //2.Register Shop.
-        File shopImgFile = new File(PathUtil.getImgBasePath() + PathUtil.getRandomFileName());
-        try {
-            shopImgFile.createNewFile();
-        } catch (IOException e) {
-            modelMap.put("success", false);
-            modelMap.put("errMsg", e.getMessage());
-            return modelMap;
-        }
-
-
         if (null != shop && null != shopImg) {
+            PersonInfo owner = new PersonInfo();
+            owner.setUserId(1L);
+            shop.setOwner(owner);
             ShopExecution shopExecution = null;
             try {
                 shopExecution = shopService.addShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());

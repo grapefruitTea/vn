@@ -33,11 +33,11 @@ public class ShopDaoTest extends BaseTest {
         shop.setLastEditTime(new Date());
         shop.setPhone("18717322343");
         shop.setPriority(1);
-        shop.setShopAddr("拐弯10米");
+        shop.setShopAddr("拐弯200米");
         shop.setShopCategory(shopCategory);
-        shop.setShopDesc("好喝的奶茶");
-        shop.setShopImg("奶茶铺地址");
-        shop.setShopName("绿茶街");
+        shop.setShopDesc("好喝的果汁");
+        shop.setShopImg("果汁地址");
+        shop.setShopName("果汁街");
         shop.setOwner(owner);
 
         int result = shopDao.insertShop(shop);
@@ -56,5 +56,10 @@ public class ShopDaoTest extends BaseTest {
 
         int i = shopDao.updateShop(shop);
         assertEquals(1,i);
+    }
+
+    @Test
+    public void queryByShopId() {
+        Shop shop = shopDao.queryByShopId(31);
     }
 }

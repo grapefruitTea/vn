@@ -6,6 +6,7 @@ import com.vn.shop.entity.Area;
 import com.vn.shop.entity.PersonInfo;
 import com.vn.shop.entity.Shop;
 import com.vn.shop.entity.ShopCategory;
+import com.vn.shop.exception.ShopOperationException;
 import com.vn.shop.service.ShopService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,19 @@ public class ShopServiceImplTest extends BaseTest {
 
 
         assertEquals(0, result.getState());
+
+    }
+
+    @Test
+    public void modifyShop() throws FileNotFoundException , ShopOperationException {
+        Shop shop = new Shop();
+        shop.setShopId(31L);
+        shop.setShopName("modfiy shop name");
+
+        File file = new File("D:\\projectres\\vn.png");
+        InputStream is = new FileInputStream(file);
+        ShopExecution result = shopService.modifyShop(shop,is, file.getName());
+        assertEquals(1,result.getState());
 
     }
 }

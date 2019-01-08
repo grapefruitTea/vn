@@ -8,6 +8,12 @@ import com.vn.shop.entity.Shop;
  */
 public interface ShopDao {
     /**
+     * 根据shopId查询店铺信息
+     * @param shopId
+     * @return
+     */
+    Shop queryByShopId(long shopId);
+    /**
      * 注册店铺
      * @param shop
      * @return
