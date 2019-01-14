@@ -7,6 +7,7 @@ import com.vn.shop.enums.ShopStateEnum;
 import com.vn.shop.exception.ShopOperationException;
 import com.vn.shop.service.ShopService;
 import com.vn.shop.util.ImageUtil;
+import com.vn.shop.util.PageCalculator;
 import com.vn.shop.util.PathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -24,6 +26,30 @@ import java.util.Date;
 public class ShopServiceImpl implements ShopService {
     @Autowired
     private ShopDao shopDao;
+
+    /**
+     * 根据查询条件，分页返回查询到的数据
+     *
+     * @param shopCondition
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public ShopExecution getShopList(Shop shopCondition, int pageIndex, int pageSize) {
+        int rowIndex = PageCalculator.calculateRowIndex(pageIndex, pageSize);
+        List<Shop> shopList = shopDao.queryShopList(shopCondition, rowIndex, pageSize);
+        int count = shopDao.queryShopCount(shopCondition);
+        ShopExecution shopExecution = new ShopExecution();
+        if (null != shopList) {
+            shopExecution.setShops(shopList);
+            shopExecution.setCount(count);
+        } else {
+            shopExecution.setState(ShopStateEnum.INNER_ERROR.getState());
+        }
+
+        return shopExecution;
+    }
 
     @Override
     @Transactional

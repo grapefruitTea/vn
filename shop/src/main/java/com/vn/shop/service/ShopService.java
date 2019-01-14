@@ -9,6 +9,14 @@ import java.io.InputStream;
 
 public interface ShopService {
     /**
+     * 根据查询条件，分页返回查询到的数据
+     * @param shopCondition
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
+    ShopExecution getShopList(Shop shopCondition,int pageIndex,int pageSize);
+    /**
      * 添加店铺 并处理图片
      *
      * @param shop

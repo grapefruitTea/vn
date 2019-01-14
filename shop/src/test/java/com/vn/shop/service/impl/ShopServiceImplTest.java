@@ -1,6 +1,7 @@
 package com.vn.shop.service.impl;
 
 import com.vn.shop.BaseTest;
+import com.vn.shop.dao.ShopDao;
 import com.vn.shop.dto.ShopExecution;
 import com.vn.shop.entity.Area;
 import com.vn.shop.entity.PersonInfo;
@@ -63,5 +64,16 @@ public class ShopServiceImplTest extends BaseTest {
         ShopExecution result = shopService.modifyShop(shop,is, file.getName());
         assertEquals(1,result.getState());
 
+    }
+
+    @Test
+    public void getShopList() {
+        Shop shopCondition = new Shop();
+        ShopCategory shopCategory= new ShopCategory();
+        shopCategory.setShopCategoryId(37L);
+        shopCondition.setShopCategory(shopCategory);
+
+        ShopExecution shopList = shopService.getShopList(shopCondition, 2, 2);
+        System.out.println(shopList.getCount());
     }
 }
