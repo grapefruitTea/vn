@@ -1,6 +1,7 @@
 package com.vn.shop.service.impl;
 
 import com.vn.shop.dao.ShopDao;
+import com.vn.shop.dto.ImageHolder;
 import com.vn.shop.dto.ShopExecution;
 import com.vn.shop.entity.Shop;
 import com.vn.shop.enums.ShopStateEnum;
@@ -36,9 +37,11 @@ public class ShopServiceImpl implements ShopService {
      * @return
      */
     @Override
-    public ShopExecution getShopList(Shop shopCondition, int pageIndex, int pageSize) {
+    public ShopExecution getShopList(Shop shopCondition, int pageIndex,
+                                     int pageSize) {
         int rowIndex = PageCalculator.calculateRowIndex(pageIndex, pageSize);
-        List<Shop> shopList = shopDao.queryShopList(shopCondition, rowIndex, pageSize);
+        List<Shop> shopList = shopDao.queryShopList(shopCondition, rowIndex,
+                pageSize);
         int count = shopDao.queryShopCount(shopCondition);
         ShopExecution shopExecution = new ShopExecution();
         if (null != shopList) {
@@ -53,7 +56,7 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     @Transactional
-    public ShopExecution addShop(Shop shop, InputStream shopImgInputStream, String fileName) {
+    public ShopExecution addShop(Shop shop, ImageHolder imageHolder) {
         if (shop == null) {
             return new ShopExecution(ShopStateEnum.NULL_SHOP);
         }
@@ -68,10 +71,10 @@ public class ShopServiceImpl implements ShopService {
             if (effectedNum <= 0) {
                 throw new ShopOperationException("店铺创建失败");
             } else {
-                if (null != shopImgInputStream) {
+                if (null != imageHolder.getImage()) {
                     try {
                         //存储图片
-                        addShopImg(shop, shopImgInputStream, fileName);
+                        addShopImg(shop, imageHolder);
                     } catch (Exception e) {
                         throw new ShopOperationException("addShopImg error: " + e.getMessage());
                     }
@@ -95,23 +98,24 @@ public class ShopServiceImpl implements ShopService {
      * 更新店铺 并处理图片
      *
      * @param shop
-     * @param shopImgInputStream
-     * @param fileName
+     * @param imageHolder
      * @return
      */
     @Override
-    public ShopExecution modifyShop(Shop shop, InputStream shopImgInputStream, String fileName) {
+    @Transactional
+    public ShopExecution modifyShop(Shop shop, ImageHolder imageHolder) {
         if (null == shop || null == shop.getShopId()) {
             return new ShopExecution(ShopStateEnum.NULL_SHOP);
         }
         try {
             //判断是否需要处理图片
-            if (null != shopImgInputStream && !"".equals(fileName) && null != fileName) {
+            if (null != imageHolder.getImage() && !"".equals(imageHolder.getImageName()) &&
+                    null != imageHolder.getImageName()) {
                 Shop shopTemp = shopDao.queryByShopId(shop.getShopId());
                 if (null != shopTemp) {
                     ImageUtil.deleteFileOrPath(shopTemp.getShopImg());
                 }
-                addShopImg(shop, shopImgInputStream, fileName);
+                addShopImg(shop, imageHolder);
             }
             //更新店铺信息
             shop.setLastEditTime(new Date());
@@ -138,9 +142,11 @@ public class ShopServiceImpl implements ShopService {
         return shopDao.queryByShopId(shopId);
     }
 
-    private void addShopImg(Shop shop, InputStream shopImgInputStream, String fileName) {
+    private void addShopImg(Shop shop, ImageHolder imageHolder) {
         String shopImagePath = PathUtil.getShopImagePath(shop.getShopId());
-        String shopImgAddr = ImageUtil.generateThumbnail(shopImgInputStream, shopImagePath, fileName);
+        String shopImgAddr =
+                ImageUtil.generateThumbnail(imageHolder,
+                        shopImagePath);
 
         shop.setShopImg(shopImgAddr);
     }

@@ -3,7 +3,9 @@ package com.vn.shop.dao;
 import com.vn.shop.BaseTest;
 import com.vn.shop.entity.ProductCategory;
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ public class ProductCategoryDaoTest extends BaseTest {
 
     @Autowired
     private ProductCategoryDao productCategoryDao;
+
     @Test
     public void testQueryById() {
         long shopId = 31L;
@@ -45,8 +48,17 @@ public class ProductCategoryDaoTest extends BaseTest {
 
         int result = productCategoryDao.batchInsertProductCategory(categoryList);
 
-        Assert.assertEquals(2,result);
+        Assert.assertEquals(2, result);
 
+    }
+
+    @Test
+    public void testDeleteProductCategory() {
+        int result = productCategoryDao.deleteProductCategory(22L, 31L);
+        System.out.println(result);
+
+        int result1 = productCategoryDao.deleteProductCategory(23L, 31L);
+        System.out.println(result1);
     }
 
 }

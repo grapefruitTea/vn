@@ -2,6 +2,7 @@ package com.vn.shop.service.impl;
 
 import com.vn.shop.BaseTest;
 import com.vn.shop.dao.ShopDao;
+import com.vn.shop.dto.ImageHolder;
 import com.vn.shop.dto.ShopExecution;
 import com.vn.shop.entity.Area;
 import com.vn.shop.entity.PersonInfo;
@@ -46,7 +47,8 @@ public class ShopServiceImplTest extends BaseTest {
 
         File file = new File("D:\\projectres\\vn.png");
         InputStream is = new FileInputStream(file);
-        ShopExecution result = shopService.addShop(shop,is, file.getName());
+        ImageHolder imageHolder = new ImageHolder(is, file.getName());
+        ShopExecution result = shopService.addShop(shop, imageHolder);
 
 
         assertEquals(0, result.getState());
@@ -54,22 +56,24 @@ public class ShopServiceImplTest extends BaseTest {
     }
 
     @Test
-    public void modifyShop() throws FileNotFoundException , ShopOperationException {
+    public void modifyShop() throws FileNotFoundException,
+            ShopOperationException {
         Shop shop = new Shop();
         shop.setShopId(31L);
         shop.setShopName("modfiy shop name");
 
         File file = new File("D:\\projectres\\vn.png");
         InputStream is = new FileInputStream(file);
-        ShopExecution result = shopService.modifyShop(shop,is, file.getName());
-        assertEquals(1,result.getState());
+        ImageHolder imageHolder = new ImageHolder(is, file.getName());
+        ShopExecution result = shopService.modifyShop(shop, imageHolder);
+        assertEquals(1, result.getState());
 
     }
 
     @Test
     public void getShopList() {
         Shop shopCondition = new Shop();
-        ShopCategory shopCategory= new ShopCategory();
+        ShopCategory shopCategory = new ShopCategory();
         shopCategory.setShopCategoryId(37L);
         shopCondition.setShopCategory(shopCategory);
 

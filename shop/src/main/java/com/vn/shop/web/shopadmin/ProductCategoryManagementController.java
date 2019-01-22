@@ -5,6 +5,7 @@ import com.vn.shop.dto.Result;
 import com.vn.shop.entity.ProductCategory;
 import com.vn.shop.entity.Shop;
 import com.vn.shop.enums.ProductCategoryStateEnum;
+import com.vn.shop.exception.ProductCategoryOperationException;
 import com.vn.shop.service.ProductCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,7 +25,7 @@ public class ProductCategoryManagementController {
     @Autowired
     private ProductCategoryService productCategoryService;
 
-    @RequestMapping(value = "/getproductcategorylist",method = RequestMethod.GET)
+    @RequestMapping(value = "/getproductcategorylist", method = RequestMethod.GET)
     @ResponseBody
     public Result<List<ProductCategory>> getProductCategoryList(HttpServletRequest request) {
         Shop currentShop = (Shop) request.getSession().getAttribute(
@@ -61,7 +62,40 @@ public class ProductCategoryManagementController {
                     modelMap.put("success", false);
                     modelMap.put("errMsg", pe.getStateInfo());
                 }
-            } catch (RuntimeException e) {
+            } catch (ProductCategoryOperationException e) {
+                modelMap.put("success", false);
+                modelMap.put("errMsg", e.toString());
+                return modelMap;
+            }
+
+        } else {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", "请至少输入一个商品类别");
+        }
+
+
+        return modelMap;
+    }
+
+    @RequestMapping(value = "/removeproductcategory", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> removeProductCategory(Long productCategoryId,
+                                                     HttpServletRequest request) {
+        Map<String, Object> modelMap = new HashMap<>(8);
+        Shop currentShop = (Shop) request.getSession().getAttribute(
+                "currentShop");
+        if (productCategoryId != null && productCategoryId > 0) {
+            try {
+                ProductCategoryExecution pe = productCategoryService
+                        .deleteProductCategory(productCategoryId, currentShop.getShopId());
+                if (pe.getStatus() == ProductCategoryStateEnum.SUCCESS
+                        .getState()) {
+                    modelMap.put("success", true);
+                } else {
+                    modelMap.put("success", false);
+                    modelMap.put("errMsg", pe.getStateInfo());
+                }
+            } catch (ProductCategoryOperationException e) {
                 modelMap.put("success", false);
                 modelMap.put("errMsg", e.toString());
                 return modelMap;

@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vn.shop.dto.ImageHolder;
 import net.coobird.thumbnailator.Thumbnails;
 
 import net.coobird.thumbnailator.geometry.Positions;
@@ -16,37 +17,39 @@ import javax.imageio.ImageIO;
 public class ImageUtil {
     private static String basePath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
 
-    public static String generateThumbnail(InputStream thumbnailInputStream, String targetAddr,String fileName) {
+    public static String generateThumbnail(ImageHolder imageHolder, String targetAddr) {
         String realFileName = PathUtil.getRandomFileName();
-        String extension = getFileExtension(fileName);
-        makeDirPath(targetAddr);
+        String extension = getFileExtension(imageHolder.getImageName());
+        makeDirPath(imageHolder.getImageName());
         String relativeAddr = targetAddr + realFileName + extension;
         File dest = new File(PathUtil.getImgBasePath() + relativeAddr);
         try {
 //            Thumbnails.of(thumbnail.getInputStream()).size(200, 200).
 ////                    outputQuality(0.25f).toFile(dest);
-            Thumbnails.of(thumbnailInputStream).size(500, 500)
+            Thumbnails.of(imageHolder.getImage()).size(500, 500)
                     .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(basePath + "/watermark.png")), 0.25f)
-                    .outputQuality(0.25f).toFile(dest);
+                    .outputQuality(0.8f).toFile(dest);
         } catch (IOException e) {
             throw new RuntimeException("创建缩略图失败：" + e.toString());
         }
         return relativeAddr;
     }
 
-//    public static String generateNormalImg(CommonsMultipartFile thumbnail, String targetAddr) {
-//        String realFileName = PathUtil.getRandomFileName();
-//        String extension = getFileExtension(thumbnail);
-//        makeDirPath(targetAddr);
-//        String relativeAddr = targetAddr + realFileName + extension;
-//        File dest = new File(PathUtil.getImgBasePath() + relativeAddr);
-//        try {
-//            Thumbnails.of(thumbnail.getInputStream()).size(337, 640).outputQuality(0.5f).toFile(dest);
-//        } catch (IOException e) {
-//            throw new RuntimeException("创建缩略图失败：" + e.toString());
-//        }
-//        return relativeAddr;
-//    }
+    public static String generateNormalImg(ImageHolder imageHolder, String targetAddr) {
+        String realFileName = PathUtil.getRandomFileName();
+        String extension = getFileExtension(imageHolder.getImageName());
+        makeDirPath(imageHolder.getImageName());
+        String relativeAddr = targetAddr + realFileName + extension;
+        File dest = new File(PathUtil.getImgBasePath() + relativeAddr);
+        try {
+            Thumbnails.of(imageHolder.getImage()).size(337, 640)
+                    .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(basePath + "/watermark.png")), 0.25f)
+                    .outputQuality(0.9f).toFile(dest);
+        } catch (IOException e) {
+            throw new RuntimeException("创建缩略图失败：" + e.toString());
+        }
+        return relativeAddr;
+    }
 
 //    public static List<String> generateNormalImgs(List<CommonsMultipartFile> imgs, String targetAddr) {
 //        int count = 0;

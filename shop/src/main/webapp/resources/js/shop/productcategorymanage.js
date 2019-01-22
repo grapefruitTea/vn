@@ -2,7 +2,7 @@ $(function () {
     var shopId = 1;
     var listUrl = '/shop/shopadmin/getproductcategorylist';
     var addUrl = '/shop/shopadmin/addproductcategorys';
-    var deleteUrl = '/myo2o/shop/removeproductcategory';
+    var deleteUrl = '/shop/shopadmin/removeproductcategory';
 
     $.getJSON(
         listUrl,
@@ -98,6 +98,9 @@ $(function () {
                 $('.category-wrap').append(tempHtml);
             });
 
+    /**
+     * 删除界面上查询出来的，css文件包含now关键字
+     */
     $('.category-wrap').on('click', '.row-product-category.now .delete',
         function (e) {
             var target = e.currentTarget;
@@ -107,7 +110,7 @@ $(function () {
                     type: 'POST',
                     data: {
                         productCategoryId: target.dataset.id,
-                        shopId: shopId
+                        // shopId: shopId
                     },
                     dataType: 'json',
                     success: function (data) {
@@ -122,6 +125,9 @@ $(function () {
             });
         });
 
+    /**
+     * 删除界面上通过新增按钮增加的，css文件包含temp关键字
+     */
     $('.category-wrap').on('click', '.row-product-category.temp .delete',
         function (e) {
             console.log($(this).parent().parent());

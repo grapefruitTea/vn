@@ -1,6 +1,7 @@
 package com.vn.shop.web.shopadmin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vn.shop.dto.ImageHolder;
 import com.vn.shop.dto.ShopExecution;
 import com.vn.shop.entity.Area;
 import com.vn.shop.entity.PersonInfo;
@@ -182,7 +183,9 @@ public class ShopManagementController {
             shop.setOwner(owner);
             ShopExecution shopExecution = null;
             try {
-                shopExecution = shopService.addShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+                ImageHolder imageHolder =
+                        new ImageHolder(shopImg.getInputStream(), shopImg.getOriginalFilename());
+                shopExecution = shopService.addShop(shop, imageHolder);
             } catch (IOException e) {
                 modelMap.put("success", false);
                 modelMap.put("errMsg", e.getMessage());
@@ -252,9 +255,11 @@ public class ShopManagementController {
             ShopExecution shopExecution = null;
             try {
                 if (null == shopImg) {
-                    shopExecution = shopService.modifyShop(shop, null, null);
+                    shopExecution = shopService.modifyShop(shop, null);
                 } else {
-                    shopExecution = shopService.modifyShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+                    ImageHolder imageHolder =
+                            new ImageHolder(shopImg.getInputStream(), shopImg.getOriginalFilename());
+                    shopExecution = shopService.modifyShop(shop, imageHolder);
                 }
             } catch (IOException e) {
                 modelMap.put("success", false);

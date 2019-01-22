@@ -13,14 +13,15 @@ public class Product implements Serializable{
 	private Long productId;
 	private String productName;
 	private String productDesc;
-	private String imgAddr;// 简略图
+	// 简略图
+	private String imgAddr;
 	private String normalPrice;
 	private String promotionPrice;
 	private Integer priority;
 	private Date createTime;
 	private Date lastEditTime;
 	private Integer enableStatus;
-	private Integer point;
+//	private Integer point;
 
 	private List<ProductImg> productImgList;
 	private ProductCategory productCategory;
@@ -106,13 +107,13 @@ public class Product implements Serializable{
 		this.enableStatus = enableStatus;
 	}
 
-	public Integer getPoint() {
-		return point;
-	}
-
-	public void setPoint(Integer point) {
-		this.point = point;
-	}
+//	public Integer getPoint() {
+//		return point;
+//	}
+//
+//	public void setPoint(Integer point) {
+//		this.point = point;
+//	}
 
 	public List<ProductImg> getProductImgList() {
 		return productImgList;

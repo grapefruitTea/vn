@@ -61,6 +61,8 @@ public class ShopDaoTest extends BaseTest {
 
         int result = shopDao.insertShop(shop);
 
+        System.out.println("#########"+shop.getShopId());
+
         assertEquals(1, result);
 
     }
