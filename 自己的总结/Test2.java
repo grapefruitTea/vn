@@ -1,5 +1,3 @@
-package com.dahua.xray.practis;
-
 import com.dahua.xray.pojo.Depart;
 import com.dahua.xray.pojo.Department;
 import lombok.Data;
@@ -67,5 +65,30 @@ public class Test2 {
             tempList.addAll(findChildren2(d));
         });
         return tempList;
+    }
+	
+	    private static List<Depart> findChildren3(Depart parentDept) {
+        List<Depart> res = new ArrayList<>();
+        Queue<Depart> q=new LinkedList<>();
+        q.add(parentDept);
+
+        while (!q.isEmpty()) {
+            Depart dept = q.poll();
+            if (!dept.isChilded()) {
+                res.add(dept);
+            } else {
+                getChild(dept,q);
+            }
+
+        }
+
+        return res;
+    }
+
+    private static void getChild(Depart parentDept,Queue queue) {
+        List<Depart> collect = depart112.stream()
+                .filter(d -> Objects.equals(parentDept.getDeptId(), d.getParentId()))
+                .collect(Collectors.toList());
+        queue.addAll(collect);
     }
 }
